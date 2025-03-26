@@ -36,7 +36,7 @@ app.secret_key = os.getenv("SECRET_KEY")
 if not app.secret_key:
     raise ValueError("SECRET_KEY is missing! Add it to the .env file.")
 
-# ✅ Convert Image to Base64
+#  Convert Image to Base64
 def encode_image(image_path):
     try:
         with open(image_path, "rb") as image_file:
@@ -45,7 +45,7 @@ def encode_image(image_path):
         logging.error(f"Failed to encode image: {e}")
         return ""
 
-# ✅ OCR Processing (Extract text from image)
+#  OCR Processing (Extract text from image)
 def process_ocr(image_path):
     try:
         return pytesseract.image_to_string(Image.open(image_path)).strip()
@@ -53,7 +53,7 @@ def process_ocr(image_path):
         logging.error(f"OCR Processing failed: {e}")
         return ""
 
-# ✅ Convert PDF to Images
+#  Convert PDF to Images
 def convert_pdf_to_images(pdf_path):
     image_paths = []
     try:
@@ -67,7 +67,7 @@ def convert_pdf_to_images(pdf_path):
         logging.error(f"PDF to Image conversion failed: {e}")
         return []
 
-# ✅ Call Qwen 2.5VL API for Invoice Extraction
+#  Call Qwen 2.5VL API for Invoice Extraction
 def call_qwen_api(base64_image):
     headers = {"Authorization": f"Bearer {OPENROUTER_API_KEY}"}
     payload = {
@@ -94,7 +94,7 @@ def call_qwen_api(base64_image):
         logging.error(f"Failed to call Qwen API: {e}")
         return {"error": "Failed to reach OpenRouter API"}
 
-# ✅ Serve Uploaded Images via URL
+#  Serve Uploaded Images via URL
 @app.route("/uploads/<conversation_id>/<filename>")
 def get_uploaded_file(conversation_id, filename):
     file_path = os.path.join(UPLOAD_FOLDER, conversation_id, filename)
@@ -102,7 +102,7 @@ def get_uploaded_file(conversation_id, filename):
         return jsonify({"error": "File not found"}), 404
     return send_from_directory(os.path.join(UPLOAD_FOLDER, conversation_id), filename)
 
-# ✅ Upload and Process Files
+#  Upload and Process Files
 @app.route("/upload", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
