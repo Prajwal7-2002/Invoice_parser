@@ -18,7 +18,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# Set Tesseract OCR path manually
+# Set Tesseract OCR path manually (Modify if needed)
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 # Poppler path for PDF conversion
@@ -35,7 +35,6 @@ CORS(app)  # Enable CORS for frontend requests
 app.secret_key = os.getenv("SECRET_KEY")
 if not app.secret_key:
     raise ValueError("SECRET_KEY is missing! Add it to the .env file.")
-
 
 # ✅ Convert Image to Base64
 def encode_image(image_path):
@@ -129,5 +128,8 @@ def upload_file():
     return jsonify({"conversation_id": conversation_id, "results": results})
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Render assigns a dynamic port
-    app.run(host="0.0.0.0", port=port)
+    port = 8080  # Use port 8080 for Localhost.run
+    logging.info(f"Starting Flask server on port {port}...")
+    print("📌 After starting the backend, run the following command in a new terminal to expose it via Localhost.run:")
+    print("🔹 ssh -R 80:localhost:8080 ssh.localhost.run")
+    app.run(host="0.0.0.0", port=port, debug=True)

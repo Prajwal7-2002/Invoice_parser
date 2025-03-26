@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 import os
 
-# Flask backend URL (Update with ngrok URL when needed)
-BACKEND_URL = "http://127.0.0.1:5000/upload"
+# 🔹 Use Cloudflare Tunnel URL from environment variable
+BACKEND_URL = os.getenv("BACKEND_URL", "https://703c7c84ac7ccd.lhr.life/upload")
 
 st.set_page_config(layout="wide")
 
@@ -28,7 +28,13 @@ if uploaded_file:
 
     with open(file_path, "rb") as f:
         files = {"file": f}
-        response = requests.post(BACKEND_URL, files=files)
+        try:
+            response = requests.post(BACKEND_URL, files=files, timeout=30)  # 🔹 Added timeout
+            response.raise_for_status()  # 🔹 Raises error if request fails
+        except requests.exceptions.RequestException as e:
+            left_col.error(f"❌ Backend connection error: {e}")
+            os.remove(file_path)
+            st.stop()
 
     if response.status_code == 200:
         result = response.json()
@@ -39,7 +45,7 @@ if uploaded_file:
 
         for index, res in enumerate(result["results"]):
             image_url = res["image_url"]
-            left_col.image(image_url, caption=f"Processed Invoice {index + 1}", width=200)
+            left_col.image(image_url, caption=f"Processed Invoice {index + 1}", width=180)  # 🔹 Smaller images
             modal_key = f"modal_{conversation_id}_{index}"
 
             if left_col.button(f"🧾 View Extracted Data - Invoice {index + 1}", key=modal_key):
