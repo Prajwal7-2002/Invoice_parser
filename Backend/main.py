@@ -15,6 +15,61 @@ import time
 import sys
 print(f"Using Python from: {sys.executable}")
 
+import json
+
+def get_qwen_response(ocr_text):
+    try:
+        url = "https://openrouter.ai/api/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+            "Content-Type": "application/json"
+        }
+
+        # Truncate text to 3000 characters to stay within limits
+        truncated_text = ocr_text[:3000]
+
+        data = {
+            "model": "qwen/qwen3-14b:free",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an invoice parser. Extract structured invoice information such as:\n"
+                        "- invoice_number\n"
+                        "- invoice_date\n"
+                        "- due_date\n"
+                        "- from (name, address, email)\n"
+                        "- to (name, address, email)\n"
+                        "- items (description, quantity, rate, subtotal)\n"
+                        "- tax, total\n"
+                        "- bank_details (bank_name, account_number, bsb)\n\n"
+                        "Return the result as a valid JSON object."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": f"Extract structured data from the following invoice text:\n\n{truncated_text}"
+                }
+            ]
+        }
+
+        response = requests.post(url, headers=headers, json=data)
+        response.raise_for_status()
+        content = response.json()["choices"][0]["message"]["content"]
+
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError:
+            return {"raw_response": content, "error": "Failed to parse JSON"}
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"RequestException: {e}")
+        logging.error(f"Request Payload: {json.dumps(data, indent=2)}")
+        return {"error": str(e)}
+
+
+
+
 # Load environment variables
 load_dotenv()
 UPLOAD_FOLDER = "uploads/"
@@ -96,11 +151,13 @@ def upload_file():
     for img_path, ocr_text in zip(image_paths, ocr_texts):
         filename = os.path.basename(img_path)
         image_url = request.host_url.rstrip('/') + f"/uploads/{conversation_id}/{filename}"
+        qwen_response = get_qwen_response(ocr_text)
         results.append({
             "image_url": image_url,
             "OCR_Text": ocr_text,
-            "Qwen_Response": "Sample AI Response"  # Replace with your AI response logic
+            "Qwen_Response": qwen_response
         })
+
 
     return jsonify({"conversation_id": conversation_id, "results": results})
 

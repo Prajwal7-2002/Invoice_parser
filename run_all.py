@@ -7,7 +7,7 @@ import os
 
 VENV_PYTHON = r"D:\Developer\invoice_parser\venv\Scripts\python.exe"
 
-# Start Flask tunnel (port 5000)
+# Start Flask tunnel (port 8080)
 flask_tunnel = ngrok.connect(8080)
 print(f"🌐 Flask backend is live at: {flask_tunnel.public_url}")
 
