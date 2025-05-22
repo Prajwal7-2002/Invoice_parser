@@ -43,7 +43,7 @@ def get_qwen_response(ocr_text):
                         "- items (description, quantity, rate, subtotal)\n"
                         "- tax, total\n"
                         "- bank_details (bank_name, account_number, bsb)\n\n"
-                        "Return the result as a valid JSON object."
+                        "Return the result as a valid JSON object also if some details are not present still work with the details present."
                     )
                 },
                 {
