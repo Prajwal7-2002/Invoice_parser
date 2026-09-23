@@ -94,6 +94,17 @@ def call_qwen_api(base64_image):
         logging.error(f"Failed to call Qwen API: {e}")
         return {"error": "Failed to reach OpenRouter API"}
 
+#  Root Route
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({
+        "status": "Invoice Parser Backend is Running",
+        "available_endpoints": {
+            "POST /upload": "Upload and process invoice files (PDF or images)",
+            "GET /uploads/<conversation_id>/<filename>": "Access uploaded images"
+        }
+    }), 200
+
 #  Serve Uploaded Images via URL
 @app.route("/uploads/<conversation_id>/<filename>")
 def get_uploaded_file(conversation_id, filename):

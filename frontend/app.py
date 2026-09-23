@@ -3,7 +3,7 @@ import requests
 import os
 
 # 🔹 Use Cloudflare Tunnel URL from environment variable
-BACKEND_URL = os.getenv("BACKEND_URL", "https://703c7c84ac7ccd.lhr.life/upload")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8080/upload")
 
 st.set_page_config(layout="wide")
 
