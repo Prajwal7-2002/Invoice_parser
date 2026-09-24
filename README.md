@@ -112,4 +112,4 @@ docker run --rm -p 8080:8080 --env-file .env invoice-parser-api
 
 This project is a clear example of applying practical AI and automation to a real business workflow. It sits in the space where software engineering meets operations: reducing repetitive work, improving data accuracy, and creating a cleaner foundation for intelligent document processing.
 
-For a recruiter or stakeholder, the short version is simple: this is a project focused on automating invoice handling, saving time, reducing operational friction, and building a scalable system for modern document workflows.
+
