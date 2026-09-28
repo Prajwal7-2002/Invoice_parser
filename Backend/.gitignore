@@ -2,3 +2,10 @@
 .pytest_cache/
 __pycache__/
 *.py[cod]
+.env
+
+# Real invoices contain customer data; never commit them.
+eval/dataset/*
+!eval/dataset/README.md
+eval/results*.json
+uploads/
